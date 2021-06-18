@@ -31,6 +31,7 @@ from keras.layers import Bidirectional
 from keras.layers import TimeDistributed
 from tensorflow.keras.layers import GRU, Embedding, SimpleRNN, Activation
 import tensorflow as tf
+import pandas as pd
 
 # Helper functions for this:
 import matplotlib.pyplot as plt
@@ -40,6 +41,8 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import roc_auc_score
 
+import warnings
+warnings.filterwarnings('ignore')
 
 class Evaluation(object):
 
@@ -65,7 +68,7 @@ class Evaluation(object):
         plt.show()
 
     @staticmethod
-    def evaluate_on_test(X_test, y_test, training_model):
+    def evaluate_nn_model(X_test, y_test, training_model):
         # This function will evaluate the fit model on test data
         g_preds = training_model.predict_classes(X_test)
         gaccuracy = accuracy_score(y_test[:, 1], g_preds)
@@ -79,6 +82,11 @@ class Evaluation(object):
         # f1: 2 tp / (2 tp + fp + fn)
         gf1 = f1_score(y_test[:, 1], g_preds)
         print('F1 score: %f' % gf1)
+        
+    @staticmethod
+    def evaluate_model(x_test, y_test, model):
+        predictions = model.predict(x_test)
+        return pd.DataFrame(classification_report(y_test, predictions, output_dict=True))
 
 
 class FeatureSelection(object):
@@ -239,7 +247,7 @@ class GroupBy(object):
         y = cleaned_df.loc[:, ['has_purchase']]
         return {"features": x, "label": y}
 
-    def preprocessing_for_sequence_model(self, num_of_events=30):
+    def preprocessing_for_sequence_model(self, num_of_events=30, debug=False):
         df = self.raw_data
         oo = df[['hits']].apply(
             lambda x: [
@@ -258,6 +266,9 @@ class GroupBy(object):
                     [(j.get('eventType').get('category'),
                       j.get('hitSequence')) for j in hit])]
                 for hit in x])['hits']
+        if debug:
+            length = sequence_df['sequence'].map(len).to_list()
+            sns.distplot(length)
         # Find the target from the raw dataset.
         total_df = []
         for i in range(len(df['totals'])):
