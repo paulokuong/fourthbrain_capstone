@@ -65,7 +65,7 @@ class FeatureSelection(object):
 
     @staticmethod
     def by_permutation_importance(
-            x, threshold=0.01, n_repeats=10, random_state=42, n_jobs=2):
+            x, y, threshold=0.01, n_repeats=10, random_state=42, n_jobs=2, debug=False):
         """Feature selection by permutation importance.
 
         Args:
@@ -76,7 +76,7 @@ class FeatureSelection(object):
         """
         feature_names = [f'feature {i}' for i in range(x.shape[1])]
         forest = RandomForestClassifier(random_state=random_state)
-        forest.fit(x, y)
+        forest.fit(x, y.values.ravel())
         start_time = time.time()
         result = permutation_importance(
             forest, x, y, n_repeats=n_repeats, random_state=random_state,
@@ -87,9 +87,11 @@ class FeatureSelection(object):
         importances = pd.DataFrame(forest_importances, columns=['score'])
         importances = importances.sort_values(by='score', ascending=False)
         importances.loc[:, 'feature'] = [
-            filtered_x.columns[int(i.replace('feature ', ''))]
+            x.columns[int(i.replace('feature ', ''))]
             for i in importances.index]
-        importances[importances['score'] > threshold]
+        
+        if debug:
+            print(importances[importances['score'] > threshold])
         return x[list(
             importances[importances['score'] > threshold]['feature'].values)]
 
@@ -102,7 +104,7 @@ class GroupBy(object):
 
         self.raw_data = pd.read_json(raw_data_path, lines=True)
 
-    def preprocessing_for_bin_class():
+    def preprocessing_for_bin_class(self):
         """Preprcess GroupBy data for binary classification training.
 
         Args:
@@ -227,6 +229,7 @@ class GroupBy(object):
         x = pad_sequences(event_sequence)
         y = np.array(pd.get_dummies(
             final_sequence_df['has_purchase'], prefix='Purchase'))
+        return {"features": x, "label": y}
 
     @staticmethod
     def train_xgb_bin_class(
@@ -239,12 +242,9 @@ class GroupBy(object):
             random_state (int): random state.
             debug (boolean): True for print out debug messages.
         """
-        # Select features
-        new_x = FeatureSelection.by_coorelation(features, debug=debug)
-        new_x = FeatureSelection.by_permutation_importance(new_x)
         # Split dataset
         x_train, x_test, y_train, y_test = train_test_split(
-            new_x.values, label, test_size=test_size,
+            features.values, label, test_size=test_size,
             random_state=random_state)
         # Train model
         exported_pipeline = XGBClassifier(
@@ -254,13 +254,14 @@ class GroupBy(object):
         exported_pipeline.fit(x_train, list(y_train.values.ravel()))
         results = exported_pipeline.predict(x_test)
         pd.DataFrame(classification_report(y_test, results, output_dict=True))
+        return exported_pipeline, x_test, y_test
 
     @staticmethod
     def train_lstm(
             features, label, op=30, neurons=40, epochs=150, batch_size=1000,
-            validation_split=0.2):
+            validation_split=0.2, test_size=0.3):
         x_train, x_test, y_train, y_test = train_test_split(
-            np.array(features), label, test_size=0.3)
+            np.array(features), label, test_size=test_size)
         x_train = x_train.reshape((x_train.shape[0], 1, x_train.shape[1]))
         x_test = x_test.reshape((x_test.shape[0], 1, x_test.shape[1]))
         tf.keras.backend.clear_session()
@@ -274,6 +275,7 @@ class GroupBy(object):
             optimizer=tf.optimizers.Adam(learning_rate=0.0003),
             loss='binary_crossentropy',
             metrics=[tf.keras.metrics.Recall()])
-        return lstm_model.fit(
+        model.fit(
             x_train, y_train, epochs=epochs, batch_size=batch_size,
             validation_split=validation_split)
+        return model, x_test, y_test
