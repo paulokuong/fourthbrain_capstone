@@ -32,6 +32,8 @@ from keras.layers import TimeDistributed
 from tensorflow.keras.layers import GRU, Embedding, SimpleRNN, Activation
 import tensorflow as tf
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Helper functions for this:
 import matplotlib.pyplot as plt
@@ -116,6 +118,10 @@ class FeatureSelection(object):
                                 f'Remove "{x.columns[j]}"'))
         if debug:
             print(len(np.full((cor.shape[0],), True, dtype=bool)))
+            plt.figure(figsize=(12,10))
+            cor = x.corr()
+            sns.heatmap(cor)
+            plt.show()
         selected_columns = x.columns[keep_columns]
         return x[selected_columns]
 
