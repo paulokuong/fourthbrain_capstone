@@ -32,6 +32,54 @@ from keras.layers import TimeDistributed
 from tensorflow.keras.layers import GRU, Embedding, SimpleRNN, Activation
 import tensorflow as tf
 
+# Helper functions for this:
+import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
+from sklearn.metrics import roc_auc_score
+
+
+class Evaluation(object):
+
+    @staticmethod
+    def plot_history(history):
+        # This function will plot the model fit process
+        print(history.history.keys())
+        # summarize history for accuracy
+        plt.plot(history.history['recall'])
+        plt.plot(history.history['val_recall'])
+        plt.title('model recall')
+        plt.ylabel('recall')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'test'], loc='upper left')
+        plt.show()
+        # summarize history for loss
+        plt.plot(history.history['loss'])
+        plt.plot(history.history['val_loss'])
+        plt.title('model loss')
+        plt.ylabel('loss')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'test'], loc='upper left')
+        plt.show()
+
+    @staticmethod
+    def evaluate_on_test(X_test, y_test, training_model):
+        # This function will evaluate the fit model on test data
+        g_preds = training_model.predict_classes(X_test)
+        gaccuracy = accuracy_score(y_test[:, 1], g_preds)
+        print('Accuracy: %f' % gaccuracy)
+        # precision tp / (tp + fp)
+        gprecision = precision_score(y_test[:, 1], g_preds)
+        print('Precision: %f' % gprecision)
+        # recall: tp / (tp + fn)
+        grecall = recall_score(y_test[:, 1], g_preds)
+        print('Recall: %f' % grecall)
+        # f1: 2 tp / (2 tp + fp + fn)
+        gf1 = f1_score(y_test[:, 1], g_preds)
+        print('F1 score: %f' % gf1)
+
 
 class FeatureSelection(object):
     @staticmethod
@@ -89,7 +137,7 @@ class FeatureSelection(object):
         importances.loc[:, 'feature'] = [
             x.columns[int(i.replace('feature ', ''))]
             for i in importances.index]
-        
+
         if debug:
             print(importances[importances['score'] > threshold])
         return x[list(
