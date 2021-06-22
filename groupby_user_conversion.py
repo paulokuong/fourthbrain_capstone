@@ -42,6 +42,8 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import roc_auc_score
+import tensorflow_addons as tfa
+import shap
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -53,10 +55,10 @@ class Evaluation(object):
         # This function will plot the model fit process
         print(history.history.keys())
         # summarize history for accuracy
-        plt.plot(history.history['recall'])
-        plt.plot(history.history['val_recall'])
-        plt.title('model recall')
-        plt.ylabel('recall')
+        plt.plot(history.history['f1_score'])
+        # plt.plot(history.history['var_f1_score'])
+        plt.title('model f1_score')
+        plt.ylabel('f1')
         plt.xlabel('epoch')
         plt.legend(['train', 'test'], loc='upper left')
         plt.show()
@@ -319,12 +321,12 @@ class GroupBy(object):
         exported_pipeline.fit(x_train, list(y_train.values.ravel()))
         results = exported_pipeline.predict(x_test)
         pd.DataFrame(classification_report(y_test, results, output_dict=True))
-        return exported_pipeline, x_test, y_test
+        return exported_pipeline, x_test, y_test, x_train, y_train
 
     @staticmethod
     def train_lstm(
             features, label, op=30, neurons=40, epochs=150, batch_size=1000,
-            validation_split=0.2, test_size=0.3):
+            validation_split=0.2, test_size=0.3, threshold=0.5):
         x_train, x_test, y_train, y_test = train_test_split(
             np.array(features), label, test_size=test_size)
         x_train = x_train.reshape((x_train.shape[0], 1, x_train.shape[1]))
@@ -339,8 +341,8 @@ class GroupBy(object):
         model.compile(
             optimizer=tf.optimizers.Adam(learning_rate=0.0003),
             loss='binary_crossentropy',
-            metrics=[tf.keras.metrics.Recall()])
+            metrics=[tfa.metrics.F1Score(num_classes=2, threshold=threshold)])
         model.fit(
             x_train, y_train, epochs=epochs, batch_size=batch_size,
             validation_split=validation_split)
-        return model, x_test, y_test
+        return model, x_test, y_test, x_train, y_train

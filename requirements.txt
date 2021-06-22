@@ -2,5 +2,7 @@ Flask==2.0.1
 flask-swagger==0.2.14
 xgboost
 TPOT
-keras
-tensorflow
+keras==2.4
+tensorflow==2.3.0
+shap
+gunicorn
