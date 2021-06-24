@@ -1,0 +1,41 @@
+{
+  "name": "static",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.2.3"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "bootstrap": "^4.3.1",
+    "bootstrap-datepicker": "^1.8.0",
+    "bootstrap-sass": "^3.4.0",
+    "bootstrap-select": "^1.13.9",
+    "bootstrap-tagsinput": "^0.7.1",
+    "bootstrap4-toggle": "^3.4.0",
+    "dateformat": "^3.0.3",
+    "get-form-data": "^2.0.0",
+    "jquery": "^3.4.1",
+    "jquery-datepicker": "^1.12.3",
+    "jquery-observe": "^0.2.3",
+    "jquery-ui-bundle": "^1.12.1-migrate",
+    "js-jquery-slider": "^1.1.4",
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.23",
+    "popper": "^1.0.1",
+    "popper.js": "^1.15.0",
+    "tempusdominus-core": "5.0.3",
+    "tempusdominus-bootstrap-4": "^5.1.2",
+    "tinymce": "^5.0.11",
+    "typeahead": "^0.2.2"
+  }
+}

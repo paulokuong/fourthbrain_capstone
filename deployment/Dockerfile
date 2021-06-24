@@ -10,6 +10,22 @@ RUN echo "deb [arch=amd64]  http://dl.google.com/linux/chrome/deb/ stable main" 
 RUN apt-get update -y
 
 COPY . /app
+
+# Build frontend
+WORKDIR /app/static
+RUN apt-get install --yes curl
+RUN curl --silent --location https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get install --yes nodejs
+RUN apt-get install --yes build-essential
+RUN npm cache clean --force
+RUN npm install npx
+RUN npm install -f webpack
+RUN npm install webpack-cli
+RUN mkdir /root/.ssh
+RUN /app/static/build.sh
+WORKDIR /app
+
+# Build backend
 WORKDIR /app
 RUN pip install -U pip
 RUN pip install --no-cache-dir -r requirements.txt
