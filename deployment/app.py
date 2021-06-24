@@ -1,9 +1,11 @@
 """
-gunicorn --bind 0.0.0.0:8080 wsgi:app
+gunicorn --bind 0.0.0.0:5000 wsgi:app
 """
 from flask import Flask, jsonify
 from flask_swagger import swagger
 from flask import redirect, session, request, json, render_template
+from xgboost import XGBClassifier
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -11,6 +13,18 @@ app = Flask(__name__)
 @app.route("/spec")
 def spec():
     return jsonify(swagger(app))
+
+
+@app.route('/user_conversion')
+def user_conversion():
+    model = XGBClassifier()
+    model.load_model('static/models/xgboost/xgboost_model')
+    return render_template('user_conversion.html')
+
+
+@app.route('/personalization')
+def personalization():
+    return render_template('personalization.html')
 
 
 @app.route('/')
