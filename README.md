@@ -11,5 +11,5 @@ eb create
 ```
 2. Deploy environment (if environment already created)
 ```
-eb deploy
+eb deploy --version app-xxxxxxxxx
 ```

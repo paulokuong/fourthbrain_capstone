@@ -36,6 +36,12 @@
     "tempusdominus-core": "5.0.3",
     "tempusdominus-bootstrap-4": "^5.1.2",
     "tinymce": "^5.0.11",
-    "typeahead": "^0.2.2"
+    "typeahead": "^0.2.2",
+    "plotly.js-dist": "^1.44.4",
+    "datatables.net": "^1.10.19",
+    "datatables.net-dt": "^1.10.19",
+    "gradient-color": "^2.0.1",
+    "randomcolor": "^0.5.3",
+    "selectize": "^0.12.6"
   }
 }

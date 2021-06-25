@@ -85,14 +85,24 @@
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
             <h1 class="h2">User Conversion</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
+              1. Show features from SHAP on one bar chart.
+              2. Show slide bars. When user slide, show model prediction of whether
+                customer converts YES or NO.
+
             </div>
           </div>
 
           <canvas class="my-4" id="myChart" width="900" height="380"></canvas>
 
-          <h2>Section title</h2>
+          <h2>Features</h2>
           <div class="table-responsive">
-            test
+            Time on site (seconds): <input id="time_on_site" data-slider-id='time_on_site' type="text" data-slider-min="0" data-slider-max="17000" data-slider-step="10" data-slider-value="100"/>
+            Total view products: <input id="total_view_products" data-slider-id='total_view_products' type="text" data-slider-min="0" data-slider-max="110" data-slider-step="1" data-slider-value="0"/>
+            Unique add to cart: <input id="unique_add_to_cart" data-slider-id='unique_add_to_cart' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/>
+            Mean product price: <input id="mean_product_price" data-slider-id='mean_product_price' type="text" data-slider-min="1" data-slider-max="300" data-slider-step="1" data-slider-value="1"/>
+            Total searches: <input id="total_searches" data-slider-id='total_searches' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="0"/>
+            Total add to cart: <input id="total_add_to_cart" data-slider-id='total_add_to_cart' type="text" data-slider-min="0" data-slider-max="1000" data-slider-step="1" data-slider-value="0"/>
+            Hour of day: <input id="hour_of_day" data-slider-id='hour_of_day' type="text" data-slider-min="0" data-slider-max="23" data-slider-step="1" data-slider-value="0"/>
           </div>
         </main>
       </div>
