@@ -62,34 +62,46 @@
           </div>
           <h2>Important Features</h2>
           <!-- <div class="table-responsive"> -->
-            <div class="row">
-              <div class="col-md-2">Time on site (seconds):</div>
-              <div class="col-md-2"><input id="time_on_site" data-slider-id='time_on_site_slider' type="text" data-slider-min="0" data-slider-max="17000" data-slider-step="10" data-slider-value="100"/></div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-5">Time on site (seconds):</div>
+                <div class="col-md-2"><input id="time_on_site" data-slider-id='time_on_site_slider' type="text" data-slider-min="0" data-slider-max="17000" data-slider-step="1" data-slider-value="100"/></div>
+              </div>
+              <div class="row">
+                <div class="col-md-5">Total view products:</div>
+                <div class="col-md-2"><input id="total_view_products" data-slider-id='total_view_products_slider' type="text" data-slider-min="0" data-slider-max="1000" data-slider-step="1" data-slider-value="0"/></div>
+              </div>
+              <div class="row">
+                <div class="col-md-5">Unique add to cart:</div>
+                <div class="col-md-2"><input id="unique_add_to_cart" data-slider-id='unique_add_to_cart_slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/></div>
+              </div>
+              <div class="row">
+                <div class="col-md-5">Mean product price:</div>
+                <div class="col-md-2"><input id="mean_product_price" data-slider-id='mean_product_price_slider' type="text" data-slider-min="1" data-slider-max="150" data-slider-step="0.1" data-slider-value="1"/></div>
+              </div>
+              <div class="row">
+                <div class="col-md-5">Total searches:</div>
+                <div class="col-md-2"><input id="total_searches" data-slider-id='total_searches_slider' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="0"/></div>
+              </div>
+              <div class="row">
+                <div class="col-md-5">Total add to cart:</div>
+                <div class="col-md-2"><input id="total_add_to_cart" data-slider-id='total_add_to_cart_slider' type="text" data-slider-min="0" data-slider-max="1000" data-slider-step="1" data-slider-value="0"/></div>
+              </div>
+              <div class="row">
+                <div class="col-md-5">Hour of day:</div>
+                <div class="col-md-2"><input id="hour_of_day" data-slider-id='hour_of_day_slider' type="text" data-slider-min="0" data-slider-max="23" data-slider-step="1" data-slider-value="0"/></div>
+              </div>
+              <div class="row">
+                <div class="col-md-5"></div>
+                <div class="col-md-2"><input id="predict_button" type="button" value="predict"></input></div>
+              </div>
             </div>
-            <div class="row">
-              <div class="col-md-2">Total view products:</div>
-              <div class="col-md-2"><input id="total_view_products" data-slider-id='total_view_products_slider' type="text" data-slider-min="0" data-slider-max="110" data-slider-step="1" data-slider-value="0"/></div>
+            <div class="col-md-2">
+            <h3>Convert:</h3> <b><span id="convert"></span></b><br>
+            <h3>Not Convert:</h3> <b><span id="nonconvert"></span></b>
             </div>
-            <div class="row">
-              <div class="col-md-2">Unique add to cart:</div>
-              <div class="col-md-2"><input id="unique_add_to_cart" data-slider-id='unique_add_to_cart_slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/></div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">Mean product price:</div>
-              <div class="col-md-2"><input id="mean_product_price" data-slider-id='mean_product_price_slider' type="text" data-slider-min="1" data-slider-max="300" data-slider-step="1" data-slider-value="1"/></div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">Total searches:</div>
-              <div class="col-md-2"><input id="total_searches" data-slider-id='total_searches_slider' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="0"/></div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">Total add to cart:</div>
-              <div class="col-md-2"><input id="total_add_to_cart" data-slider-id='total_add_to_cart_slider' type="text" data-slider-min="0" data-slider-max="1000" data-slider-step="1" data-slider-value="0"/></div>
-            </div>
-            <div class="row">
-              <div class="col-md-2">Hour of day:</div>
-              <div class="col-md-2"><input id="hour_of_day" data-slider-id='hour_of_day_slider' type="text" data-slider-min="0" data-slider-max="23" data-slider-step="1" data-slider-value="0"/></div>
-            </div>
+          </div>
           <!-- </div> -->
         </main>
       </div>

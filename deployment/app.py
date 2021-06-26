@@ -9,6 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import shap
 import pickle
+import numpy as np
 
 app = Flask(__name__)
 
@@ -49,9 +50,44 @@ def user_conversion():
 
 @app.route('/user_conversion_predict')
 def user_conversion_predict():
+    time_on_site = request.args.get('time_on_site', 0)
+    total_view_products = request.args.get('total_view_products', 0)
+    unique_add_to_cart = request.args.get('unique_add_to_cart', 0)
+    mean_product_price = request.args.get('mean_product_price', 0)
+    total_searches = request.args.get('total_searches', 0)
+    total_add_to_cart = request.args.get('total_add_to_cart', 0)
+    hour_of_day = request.args.get('hour_of_day', 0)
+
     model = XGBClassifier()
-    model.load_model('xgboost_model')
-    model.predict_proba(np.array([100, 300, 30, 23, 30, 4, 0]).reshape(1, -1))
+    model.load_model('static/models/xgboost/xgboost_model')
+    predictions = model.predict_proba(
+        np.array([
+            int(time_on_site),
+            int(total_view_products),
+            int(unique_add_to_cart),
+            float(mean_product_price),
+            int(total_searches),
+            int(total_add_to_cart),
+            int(hour_of_day)]).reshape(1, -1))
+
+    nonconvert, convert = predictions.tolist()[0]
+    return app.response_class(
+        response=json.dumps({
+            "convert": convert,
+            "nonconvert": nonconvert,
+            "input": {
+                "time_on_site": int(time_on_site),
+                "total_view_products": int(total_view_products),
+                "unique_add_to_cart": int(unique_add_to_cart),
+                "mean_product_price": float(mean_product_price),
+                "total_searches": int(total_searches),
+                "total_add_to_cart": int(total_add_to_cart),
+                "hour_of_day": int(hour_of_day)
+            }
+        }),
+        status=200,
+        mimetype='application/json'
+    )
 
 
 @app.route('/personalization')

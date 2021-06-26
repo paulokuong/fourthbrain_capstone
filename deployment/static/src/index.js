@@ -39,12 +39,28 @@ class Index {
         });
       });
     }
+
     user_conversion_predict(){
-      
+      var url = '/user_conversion_predict' +
+        '?time_on_site=' + $("#time_on_site").val() +
+        '&total_view_products=' + $("#total_view_products").val() +
+        '&unique_add_to_cart=' + $("#unique_add_to_cart").val() +
+        '&mean_product_price=' + $("#mean_product_price").val() +
+        '&total_searches=' + $("#total_searches").val() +
+        '&total_add_to_cart=' + $("#total_add_to_cart").val() +
+        '&hour_of_day=' + $("#hour_of_day").val();
+      axios.get(url).then(function(res) {
+        console.log(res);
+        $("#convert").html(res.data["convert"]);
+        $("#nonconvert").html(res.data["nonconvert"]);
+      });
     }
 }
 
 $(document).ready(function(e) {
     var i = new Index();
     i.hookSlidingBars();
+    $("#predict_button").click(function(){
+      i.user_conversion_predict();
+    });
 });
