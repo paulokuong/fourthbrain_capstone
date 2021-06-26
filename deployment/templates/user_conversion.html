@@ -1,28 +1,3 @@
-<!-- <!DOCTYPE html>
-<html>
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-  <title>sample</title>
-  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/static/css/styles.css">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-</head>
-
-<body>
-  <div class="container">
-    <div class="row">
-      TEST
-    </div>
-  </div>
-  <script src="/static/dist/index.js"></script>
-</body>
-
-</html> -->
-
-
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -38,20 +13,14 @@
 
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Custom styles for this template -->
     <link href="/static/css/dashboard.css" rel="stylesheet">
+    <link href="/static/css/bootstrap-slider.css" rel="stylesheet">
   </head>
 
   <body>
     <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">GroupBy</a>
-      <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
-      <!-- <ul class="navbar-nav px-3">
-        <li class="nav-item text-nowrap">
-          <a class="nav-link" href="#">Sign out</a>
-        </li>
-      </ul> -->
     </nav>
 
     <div class="container-fluid">
@@ -60,15 +29,15 @@
           <div class="sidebar-sticky">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link active" href="/">
+                <a class="nav-link" href="/">
                   <span data-feather="home"></span>
-                  Home <span class="sr-only">(current)</span>
+                  Home
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/user_conversion">
+                <a class="nav-link active" href="/user_conversion">
                   <span data-feather="file"></span>
-                  Customer Conversion
+                  Customer Conversion <span class="sr-only">(current)</span>
                 </a>
               </li>
               <li class="nav-item">
@@ -83,27 +52,45 @@
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-            <h1 class="h2">User Conversion</h1>
-            <div class="btn-toolbar mb-2 mb-md-0">
-              1. Show features from SHAP on one bar chart.
-              2. Show slide bars. When user slide, show model prediction of whether
-                customer converts YES or NO.
+            <h1 class="h2">Customer Conversion</h1>
+          </div>
+          <h2>XGBoost Model Explanation</h2>
 
+          <div class="row">
+              <div class="col-md-6"><img height="280px" src="{{ shap_bar_graph }}"></img></div>
+              <div class="col-md-1"><img height="280px" src="{{ explanability }}"></img></div>
+          </div>
+          <h2>Important Features</h2>
+          <!-- <div class="table-responsive"> -->
+            <div class="row">
+              <div class="col-md-2">Time on site (seconds):</div>
+              <div class="col-md-2"><input id="time_on_site" data-slider-id='time_on_site_slider' type="text" data-slider-min="0" data-slider-max="17000" data-slider-step="10" data-slider-value="100"/></div>
             </div>
-          </div>
-
-          <canvas class="my-4" id="myChart" width="900" height="380"></canvas>
-
-          <h2>Features</h2>
-          <div class="table-responsive">
-            Time on site (seconds): <input id="time_on_site" data-slider-id='time_on_site' type="text" data-slider-min="0" data-slider-max="17000" data-slider-step="10" data-slider-value="100"/>
-            Total view products: <input id="total_view_products" data-slider-id='total_view_products' type="text" data-slider-min="0" data-slider-max="110" data-slider-step="1" data-slider-value="0"/>
-            Unique add to cart: <input id="unique_add_to_cart" data-slider-id='unique_add_to_cart' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/>
-            Mean product price: <input id="mean_product_price" data-slider-id='mean_product_price' type="text" data-slider-min="1" data-slider-max="300" data-slider-step="1" data-slider-value="1"/>
-            Total searches: <input id="total_searches" data-slider-id='total_searches' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="0"/>
-            Total add to cart: <input id="total_add_to_cart" data-slider-id='total_add_to_cart' type="text" data-slider-min="0" data-slider-max="1000" data-slider-step="1" data-slider-value="0"/>
-            Hour of day: <input id="hour_of_day" data-slider-id='hour_of_day' type="text" data-slider-min="0" data-slider-max="23" data-slider-step="1" data-slider-value="0"/>
-          </div>
+            <div class="row">
+              <div class="col-md-2">Total view products:</div>
+              <div class="col-md-2"><input id="total_view_products" data-slider-id='total_view_products_slider' type="text" data-slider-min="0" data-slider-max="110" data-slider-step="1" data-slider-value="0"/></div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">Unique add to cart:</div>
+              <div class="col-md-2"><input id="unique_add_to_cart" data-slider-id='unique_add_to_cart_slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/></div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">Mean product price:</div>
+              <div class="col-md-2"><input id="mean_product_price" data-slider-id='mean_product_price_slider' type="text" data-slider-min="1" data-slider-max="300" data-slider-step="1" data-slider-value="1"/></div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">Total searches:</div>
+              <div class="col-md-2"><input id="total_searches" data-slider-id='total_searches_slider' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="0"/></div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">Total add to cart:</div>
+              <div class="col-md-2"><input id="total_add_to_cart" data-slider-id='total_add_to_cart_slider' type="text" data-slider-min="0" data-slider-max="1000" data-slider-step="1" data-slider-value="0"/></div>
+            </div>
+            <div class="row">
+              <div class="col-md-2">Hour of day:</div>
+              <div class="col-md-2"><input id="hour_of_day" data-slider-id='hour_of_day_slider' type="text" data-slider-min="0" data-slider-max="23" data-slider-step="1" data-slider-value="0"/></div>
+            </div>
+          <!-- </div> -->
         </main>
       </div>
     </div>
@@ -122,37 +109,6 @@
       feather.replace()
     </script>
 
-    <!-- Graphs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
-    <script>
-      var ctx = document.getElementById("myChart");
-      var myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-          datasets: [{
-            data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-            lineTension: 0,
-            backgroundColor: 'transparent',
-            borderColor: '#007bff',
-            borderWidth: 4,
-            pointBackgroundColor: '#007bff'
-          }]
-        },
-        options: {
-          scales: {
-            yAxes: [{
-              ticks: {
-                beginAtZero: false
-              }
-            }]
-          },
-          legend: {
-            display: false,
-          }
-        }
-      });
-    </script>
   </body>
   <script src="/static/dist/index.js"></script>
 </html>

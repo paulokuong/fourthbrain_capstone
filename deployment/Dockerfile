@@ -22,7 +22,7 @@ RUN npm install npx
 RUN npm install -f webpack
 RUN npm install webpack-cli
 RUN mkdir /root/.ssh
-RUN /app/static/build.sh
+#RUN /app/static/build.sh
 WORKDIR /app
 
 # Build backend

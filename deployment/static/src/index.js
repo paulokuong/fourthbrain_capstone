@@ -17,6 +17,7 @@ import gradient from 'gradient-color';
 import 'bootstrap4-toggle';
 import 'jquery-ui-bundle';
 import Plotly from 'plotly.js-dist';
+import Slider from 'bootstrap-slider';
 
 class Index {
     constructor(env) {
@@ -28,22 +29,22 @@ class Index {
         "unique_add_to_cart", "mean_product_price", "total_searches",
         "total_add_to_cart", "hour_of_day"
       ];
-      for(var bar in bars){
-        console.log(bar);
-        $('#'+bar).slider({
+
+      bars.forEach(function (item, index) {
+        console.log(item, index);
+        var mySlider = new Slider("#"+item, {
           formatter: function(value) {
             return 'Current value: ' + value;
           }
         });
-      }
+      });
+    }
+    user_conversion_predict(){
+      
     }
 }
 
 $(document).ready(function(e) {
     var i = new Index();
     i.hookSlidingBars();
-    $('[data-toggle="tooltip"]').tooltip();
-    $('#carousel').carousel({
-        interval: 2000
-    })
 });
