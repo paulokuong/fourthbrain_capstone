@@ -45,6 +45,19 @@ from sklearn.metrics import roc_auc_score
 import tensorflow_addons as tfa
 import shap
 
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.pipeline import make_pipeline, make_union
+from tpot.builtins import StackingEstimator
+from xgboost import XGBClassifier
+from tpot.export_utils import set_param_recursive
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.naive_bayes import GaussianNB, BernoulliNB
+
+
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -253,7 +266,7 @@ class GroupBy(object):
             set(cleaned_df.columns) - set('has_purchase'))]
         del x['has_purchase']
         y = cleaned_df.loc[:, ['has_purchase']]
-        return {"features": x, "label": y}
+        return {"features": x, "label": y,"all_os":all_os, "all_source":all_source}
 
     def preprocessing_for_sequence_model(self, num_of_events=30, debug=False):
         df = self.raw_data
@@ -294,14 +307,16 @@ class GroupBy(object):
         event_sequence = final_sequence_df['sequence'].to_list()
         # Pad 0 to make all sequences to have the same size.
         x = pad_sequences(event_sequence)
+        # replace 4 to 0 since 4 is our target
+        x = np.where(x==4, 0, x) 
         y = np.array(pd.get_dummies(
             final_sequence_df['has_purchase'], prefix='Purchase'))
-        return {"features": x, "label": y}
+        return {"features": x, "label": y,"event_type_map":event_type_map}
 
     @staticmethod
     def train_xgb_bin_class(
             features, label, test_size=0.33, random_state=42, debug=False):
-        """Train binary classification using XGBoost algorithm
+        """Train binary classification using ensemble stacking classifier
 
         Args:
             preprocessed_data (pandas dataframe): preprocessed data.
@@ -314,14 +329,17 @@ class GroupBy(object):
             features.values, label, test_size=test_size,
             random_state=random_state)
         # Train model
-        exported_pipeline = XGBClassifier(
-            learning_rate=0.1, max_depth=4, min_child_weight=8,
-            n_estimators=100, n_jobs=1, subsample=0.9500000000000001,
-            verbosity=0, random_state=random_state)
-        exported_pipeline.fit(x_train, list(y_train.values.ravel()))
-        results = exported_pipeline.predict(x_test)
-        pd.DataFrame(classification_report(y_test, results, output_dict=True))
+        exported_pipeline = make_pipeline(
+            StackingEstimator(estimator=RandomForestClassifier(bootstrap=False, criterion="entropy", max_features=0.9500000000000001, min_samples_leaf=4, min_samples_split=4, n_estimators=100)),
+            BernoulliNB(alpha=0.01, fit_prior=True)
+        )
+        # Fix random state for all the steps in exported pipeline
+        set_param_recursive(exported_pipeline.steps, 'random_state', 42)
+
+        exported_pipeline.fit(x_train, y_train)
+
         return exported_pipeline, x_test, y_test, x_train, y_train
+
 
     @staticmethod
     def train_lstm(

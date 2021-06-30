@@ -54,55 +54,91 @@
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
             <h1 class="h2">Customer Conversion</h1>
           </div>
-          <h2>XGBoost Model Explanation</h2>
+          <h2>Important Features</h2>
+          <div class="row">
+            <div class="col-md-5">
+              <img height="250px" src="{{ feature_importance }}"></img>
+            </div>
+          </div>
+          <br>
+          <h2>Binary Classification Model Explanation</h2>
+          <div class="row">
+              <div class="col-md-10">
+                <p>We performed training a binary classification model using ensemble stacking classifiers: (GaussianNB(XGBClassifier(input_matrix, learning_rate=0.001, max_depth=6, min_child_weight=10, n_estimators=100, n_jobs=1, subsample=0.4, verbosity=0)))
+                  <br>The performance we can achieve is:
+                  <img height="200px" src="{{ scores }}"></img>
+                </p>
+                <p>
+                  * The more product views, the greater the chance of a purchase.
+                  <br>* Add to cart and product search greatly increase the chance of a purchase.
+                  <br>* Different product price non-linearly affect chance of purchase.
+                  <br>* Chance of purchase is higher close to midnight.
+                  <br>* 
+                </p>
+              </div>
+          </div>
+          <!-- <div class="table-responsive"> -->
 
           <div class="row">
-              <div class="col-md-6"><img height="280px" src="{{ shap_bar_graph }}"></img></div>
-              <div class="col-md-1"><img height="280px" src="{{ explanability }}"></img></div>
-          </div>
-          <h2>Important Features</h2>
-          <!-- <div class="table-responsive"> -->
-          <div class="row">
             <div class="col-md-6">
+              {% for feature in features %}
+                  <div class="row">
+                    <div class="col-md-5">{{ feature.name }}</div>
+                    <div class="col-md-2"><input class="slider_input" id="{{ feature.id }}" data-slider-id='{{ feature.id }}_slider' type="text" data-slider-min="{{ feature.min_value }}" data-slider-max="{{ feature.max_value }}" data-slider-step="{{ feature.step }}" data-slider-value="{{ feature.default_value }}"/></div>
+                  </div>
+              {% endfor %}
               <div class="row">
-                <div class="col-md-5">Time on site (seconds):</div>
-                <div class="col-md-2"><input id="time_on_site" data-slider-id='time_on_site_slider' type="text" data-slider-min="0" data-slider-max="17000" data-slider-step="1" data-slider-value="100"/></div>
-              </div>
-              <div class="row">
-                <div class="col-md-5">Total view products:</div>
-                <div class="col-md-2"><input id="total_view_products" data-slider-id='total_view_products_slider' type="text" data-slider-min="0" data-slider-max="1000" data-slider-step="1" data-slider-value="0"/></div>
-              </div>
-              <div class="row">
-                <div class="col-md-5">Unique add to cart:</div>
-                <div class="col-md-2"><input id="unique_add_to_cart" data-slider-id='unique_add_to_cart_slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="0"/></div>
-              </div>
-              <div class="row">
-                <div class="col-md-5">Mean product price:</div>
-                <div class="col-md-2"><input id="mean_product_price" data-slider-id='mean_product_price_slider' type="text" data-slider-min="1" data-slider-max="150" data-slider-step="0.1" data-slider-value="1"/></div>
-              </div>
-              <div class="row">
-                <div class="col-md-5">Total searches:</div>
-                <div class="col-md-2"><input id="total_searches" data-slider-id='total_searches_slider' type="text" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="0"/></div>
-              </div>
-              <div class="row">
-                <div class="col-md-5">Total add to cart:</div>
-                <div class="col-md-2"><input id="total_add_to_cart" data-slider-id='total_add_to_cart_slider' type="text" data-slider-min="0" data-slider-max="1000" data-slider-step="1" data-slider-value="0"/></div>
-              </div>
-              <div class="row">
-                <div class="col-md-5">Hour of day:</div>
-                <div class="col-md-2"><input id="hour_of_day" data-slider-id='hour_of_day_slider' type="text" data-slider-min="0" data-slider-max="23" data-slider-step="1" data-slider-value="0"/></div>
-              </div>
-              <div class="row">
-                <div class="col-md-5"></div>
-                <div class="col-md-2"><input id="predict_button" type="button" value="predict"></input></div>
+                <div class="col-md-9"></div>
+                <div class="col-md-1"><input class="btn btn-primary" id="predict_button" type="button" value="predict"></input></div>
               </div>
             </div>
-            <div class="col-md-2">
-            <h3>Convert:</h3> <b><span id="convert"></span></b><br>
-            <h3>Not Convert:</h3> <b><span id="nonconvert"></span></b>
+            <div class="col-md-4">
+              <h3>Convert: <b><span id="convert"></span></b></h3> <br>
+              <h3>Not Convert: <b><span id="nonconvert"></span></b></h3>
             </div>
           </div>
           <!-- </div> -->
+          <h2>Sequential Model Explanation</h2>
+          <div class="row">
+            <div class="col-md-10">
+              We would like to predict the chance of a conversion by looking at sequences of event (view product, search product, add to cart) for each session.
+              . Most sessions have a the number of events <= 40. By using LSTM, we are able to produce the following metrics:
+              Acquired metrics are:
+              <p>Accuracy: 0.982104
+              Precision: 0.921922
+              Recall: 0.839562
+              F1 score: 0.878817</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <img height="230px" src="{{ events_dist }}"></img>
+            </div>
+            <div class="col-md-3">
+              <img height="230px" src="{{ lstm_f1 }}"></img>
+            </div>
+            <div class="col-md-3">
+              <img height="230px" src="{{ lstm_model_loss }}"></img>
+            </div>
+          </div>
+          <h2>Example sequences for conversion</h2>
+          <div class="row">
+            <div class="col-md-10">
+              Following is an event type map:
+              {'viewProduct': 1, 'addToCart': 2, 'search': 3}
+            <div>
+          </div>
+          <div class="row">
+            <div class="col-md-10">
+                 <br><b>sequence 1:</b> 2, 0, 1, 1
+                 <br><b>sequence 2:</b>2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+                 <br><b>sequence 3:</b>2, 0, 1, 1
+                 <br><b>sequence 4:</b>2, 2, 2, 2, 2, 2, 0, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+                 <br><b>sequence 5:</b>2, 2, 0, 3
+                <br><b>sequence 6:</b>2, 2, 2, 2, 0, 3
+                <br><b>sequence 7:</b>2, 2, 2, 0, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1
+            </div>
+          </div>
         </main>
       </div>
     </div>

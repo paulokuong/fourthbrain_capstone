@@ -19,18 +19,34 @@ import 'jquery-ui-bundle';
 import Plotly from 'plotly.js-dist';
 import Slider from 'bootstrap-slider';
 
+/*
+feature 3   0.067646  totalViewProducts
+feature 8   0.062860  totalAddToCartQty
+feature 4   0.055818    totalAddToCarts
+feature 15  0.034540   productPriceMean
+feature 9   0.033196          hourOfDay
+feature 0   0.016931     uniqueSearches
+feature 1   0.014983      totalSearches
+feature 12  0.013691       has_campaign
+feature 14  0.012890            browser
+*/
+
+
 class Index {
     constructor(env) {
-
+      this.bars = [
+        "total_view_products",
+        "total_add_to_cart_qty",
+        "total_add_to_carts",
+        "product_price_mean",
+        "hour_of_day",
+        "unique_searches",
+        "total_searches",
+        "has_campaign"
+      ];
     }
     hookSlidingBars() {
-      var bars = [
-        "time_on_site", "total_view_products",
-        "unique_add_to_cart", "mean_product_price", "total_searches",
-        "total_add_to_cart", "hour_of_day"
-      ];
-
-      bars.forEach(function (item, index) {
+      this.bars.forEach(function (item, index) {
         console.log(item, index);
         var mySlider = new Slider("#"+item, {
           formatter: function(value) {
@@ -41,14 +57,11 @@ class Index {
     }
 
     user_conversion_predict(){
-      var url = '/user_conversion_predict' +
-        '?time_on_site=' + $("#time_on_site").val() +
-        '&total_view_products=' + $("#total_view_products").val() +
-        '&unique_add_to_cart=' + $("#unique_add_to_cart").val() +
-        '&mean_product_price=' + $("#mean_product_price").val() +
-        '&total_searches=' + $("#total_searches").val() +
-        '&total_add_to_cart=' + $("#total_add_to_cart").val() +
-        '&hour_of_day=' + $("#hour_of_day").val();
+      var query_string_arr = [];
+      this.bars.forEach(function (item, index) {
+        query_string_arr.push(item + '=' + $("#"+item).val());
+      });
+      var url = '/user_conversion_predict?' + query_string_arr.join('&');
       axios.get(url).then(function(res) {
         console.log(res);
         $("#convert").html(res.data["convert"]);
@@ -63,4 +76,5 @@ $(document).ready(function(e) {
     $("#predict_button").click(function(){
       i.user_conversion_predict();
     });
+    i.user_conversion_predict();
 });

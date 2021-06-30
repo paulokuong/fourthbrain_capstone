@@ -29,6 +29,7 @@ WORKDIR /app
 WORKDIR /app
 RUN pip install -U pip
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install tensorflow==2.3
 EXPOSE 5000
 ENTRYPOINT ["gunicorn"]
 CMD ["-b", ":5000", "wsgi:app"]
