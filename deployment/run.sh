@@ -1,1 +1,1 @@
-docker run -p 5000:5000 -v `pwd`:/app groupby
+docker run -p 5000:5000 -v `pwd`:/app groupby_app

@@ -11,6 +11,8 @@ import shap
 import pickle
 import numpy as np
 from joblib import dump, load
+from tensorflow import keras
+from tensorflow_addons.metrics import F1Score
 
 app = Flask(__name__)
 
@@ -24,7 +26,6 @@ feature 9   0.033196          hourOfDay
 feature 0   0.016931     uniqueSearches
 feature 1   0.014983      totalSearches
 feature 12  0.013691       has_campaign
-feature 14  0.012890            browser
 """
 features = [
     {
@@ -54,11 +55,11 @@ features = [
     {
         "id": "total_searches", "name": "Total searches",
         "min_value": 0, "max_value": 20, "default_value": 0, "step": 1
-    },
-    {
-        "id": "has_campaign", "name": "Has Campaign",
-        "min_value": 0, "max_value": 1, "default_value": 0, "step": 1
     }
+    # {
+    #     "id": "has_campaign", "name": "Has Campaign",
+    #     "min_value": 0, "max_value": 1, "default_value": 0, "step": 1
+    # }
 ]
 
 
@@ -82,13 +83,29 @@ def user_conversion():
 
     return render_template(
         'user_conversion.html', shap_bar_graph=img_path,
-        explanability=explanability, features=[
-            i for i in features if i['id'] not in ['os', 'source']],
+        explanability=explanability, features=features,
         feature_importance=feature_importance, scores=scores,
         events_dist=events_dist, lstm_f1=lstm_f1, lstm_model_loss=lstm_model_loss)
 
-# @app.route('/user_conversion_lstm_predict')
-# def user_conversion_lstm_predict():
+
+@app.route('/user_conversion_lstm_predict')
+def user_conversion_lstm_predict():
+    seq = request.args.get('seq', '000')
+    seq = str(seq)
+    seq = seq.zfill(40)
+    seq_arr = [int(i) for i in list(seq)]
+    lstm_model_new = keras.models.load_model(
+        'static/models/lstm/lstm_model.h5')
+    predictions = lstm_model_new.predict_proba(
+        np.array(seq_arr).reshape(1, 1, -1))
+    return app.response_class(
+        response=json.dumps({
+            "input": seq_arr,
+            "predictions": predictions.tolist()[0]
+        }),
+        status=200,
+        mimetype='application/json'
+    )
 
 
 @app.route('/user_conversion_predict')
@@ -99,6 +116,7 @@ def user_conversion_predict():
             inputs.append(float(request.args.get(f['id'], 0)))
         else:
             inputs.append(int(request.args.get(f['id'], 0)))
+    inputs.append(0)
     model = load('static/models/ensemble/stacking.joblib')
     predictions = np.round(model.predict_proba(
         np.array(inputs).reshape(1, -1)), 6)

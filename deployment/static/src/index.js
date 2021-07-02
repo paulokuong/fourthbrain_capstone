@@ -41,9 +41,10 @@ class Index {
         "product_price_mean",
         "hour_of_day",
         "unique_searches",
-        "total_searches",
-        "has_campaign"
+        "total_searches"
+        // "has_campaign"
       ];
+      this.last_40_event = '';
     }
     hookSlidingBars() {
       this.bars.forEach(function (item, index) {
@@ -68,6 +69,50 @@ class Index {
         $("#nonconvert").html(res.data["nonconvert"]);
       });
     }
+
+    seq_user_conversion_predict(){
+      var seq = $("#last_40_event").val();
+      seq = seq.split("").reverse().join("");
+      var url = '/user_conversion_lstm_predict?seq=' + seq;
+      axios.get(url).then(function(res) {
+        console.log(res);
+        $("#seq_convert").html(res.data["predictions"][0]);
+        $("#seq_nonconvert").html(res.data["predictions"][1]);
+      });
+    }
+
+    set_var(){
+      var padded = this.last_40_event.padStart(40, "0");
+      var last_40 = padded.substring(padded.length - 40)
+      this.last_40_event = last_40;
+      console.log(last_40);
+      $("#last_40_event").val(last_40);
+      $("#seq_convert").html('predicting...');
+      $("#seq_nonconvert").html('predicting...');
+      this.seq_user_conversion_predict();
+    }
+
+    hook_seq_buttons(){
+      var this_class = this;
+      $("#view_product_button").click(function(){
+        this_class.last_40_event += '1';
+        this_class.set_var();
+      });
+      $("#add_to_cart_button").click(function(){
+        this_class.last_40_event += '2';
+        this_class.set_var();
+      });
+      $("#search_button").click(function(){
+        this_class.last_40_event += '3';
+        this_class.set_var();
+      });
+      $("#clear_button").click(function(){
+        this_class.last_40_event = '';
+        $("#last_40_event").val("");
+        $("#seq_convert").textContent='';
+        $("#seq_nonconvert").textContent='';
+      });
+    }
 }
 
 $(document).ready(function(e) {
@@ -77,4 +122,5 @@ $(document).ready(function(e) {
       i.user_conversion_predict();
     });
     i.user_conversion_predict();
+    i.hook_seq_buttons();
 });
